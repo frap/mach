@@ -155,7 +155,7 @@
 (reader/register-tag-parser! 'cpfile  add-classpath-path-file-to-sources)
 
 (defn ^:private eval-cljs [cljs-file]
-  (lumo.repl/execute "file" cljs-file true true nil 0)
+  (#'lumo.repl/execute "file" cljs-file true true nil 0)
   `[])
 
 (reader/register-tag-parser! 'eval eval-cljs)
@@ -165,7 +165,7 @@
 (def ^:private load-fn cljs.js/*load-fn*)
 
 (defn code-eval [code]
-  (binding [cljs/*eval-fn* lumo.repl/caching-node-eval
+  (binding [cljs/*eval-fn* #'lumo.repl/caching-node-eval
             cljs.js/*load-fn* load-fn]
     (let [{:keys [value error] :as res} (cljs/eval lumo.repl/st code identity)]
       (if error
@@ -482,7 +482,7 @@
     (postwalk (fn [x]
                 (cond (and (list? x) (= 'require (first x)))
                       (do
-                        (lumo.repl/execute "text" (str x) true false nil 0)
+                        (#'lumo.repl/execute "text" (str x) true false nil 0)
                         nil)
 
                       ;; Auto require
